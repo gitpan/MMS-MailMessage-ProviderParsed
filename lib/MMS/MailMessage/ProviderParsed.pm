@@ -11,11 +11,11 @@ MMS::MailMessage::ProviderParsed - A class representing a parsed MMS (or picture
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -39,21 +39,21 @@ Return a new MMS::MailMessage::ProviderParsed object.
 
 =over
 
-=item addpicture MIME::Entity
+=item add_picture MIME::Entity
 
 Adds the supplied MIME::Entity attachment to the picture stack for the message.  This method is mainly used by the MMS::MailProviderParser class to add pictures while parsing.
 
-=item addvideo MIME::Entity
+=item add_video MIME::Entity
 
 Adds the supplied MIME::Entity attachment to the video stack for the message.  This method is mainly used by the MMS::MailProviderParser class to add videos while parsing.
 
 =item pictures 
 
-Returns an array of pictures from the message.
+Returns an array reference to an array of pictures from the message.
 
 =item videos
 
-Returns an array of videos from the message.
+Returns an array reference to an array of videos from the message.
 
 =item datetime STRING
 
@@ -75,9 +75,29 @@ Returns the MMS subject when invoked with no supplied parameter.  When supplied 
 
 Returns the MMS body text when invoked with no supplied parameter.  When supplied with a parameter it sets the object property to the supplied parameter.  This returns the headertext property if a text property has not been explicitly set.
 
-=item retrievemimeattachments STRING
+=item retrieve_attachments STRING
 
 Expects a mime-type to be passed as an argument and a regular expression match using the supplied string is applied to each attachment in the attachment stack of the message object and a reference to an array of objects where the mime-type matches the supplied string is returned.  In the event no attachment was matched to the supplied mime-type an undef value is returned.
+
+=back
+
+=head2 Deprecated Methods
+
+Methods listed here are maintained for backwards compatibility and should not be used in new code as they may be removed in future versions.
+
+=over
+
+=item addvideo
+
+Equivalent to add_video
+
+=item addpicture
+
+Equivalent to add_picture
+
+=item retrievemimeattachments
+
+Equivalent to retrieve_attachments
 
 =back
 
@@ -140,15 +160,13 @@ sub subject {
   unless (defined $subject) {
     if (exists($self->{subject})) {
       return $self->{subject};
-    } elsif (defined $self->headersubject) {
-      return $self->headersubject;
+    } elsif (defined $self->header_subject) {
+      return $self->header_subject;
     } else {
       return undef;
     }
   }
-  chomp($subject);
-  $self->{subject}=$subject;
-
+  $self->{subject} = $subject;
 }
 
 sub to {
@@ -159,15 +177,13 @@ sub to {
   unless (defined $to) {
     if (exists($self->{to})) {
       return $self->{to};
-    } elsif (defined $self->headerto) {
-      return $self->headerto;
+    } elsif (defined $self->header_to) {
+      return $self->header_to;
     } else {
       return undef;
     }
   }
-  chomp($to);
-  $self->{to}=$to;
-
+  $self->{to} = $to;
 }
 
 sub from {
@@ -178,15 +194,13 @@ sub from {
   unless (defined $from) {
     if (exists($self->{from})) {
       return $self->{from};
-    } elsif (defined $self->headerfrom) {
-      return $self->headerfrom;
+    } elsif (defined $self->header_from) {
+      return $self->header_from;
     } else {
       return undef;
     }
   }
-  chomp($from);
-  $self->{from}=$from;
-
+  $self->{from} = $from;
 }
 
 sub datetime {
@@ -197,15 +211,13 @@ sub datetime {
   unless (defined $datetime) {
     if (exists($self->{datetime})) {
       return $self->{datetime};
-    } elsif (defined $self->headerdatetime) {
-      return $self->headerdatetime;
+    } elsif (defined $self->header_datetime) {
+      return $self->header_datetime;
     } else {
       return undef;
     }
   }
-  chomp($datetime);
-  $self->{datetime}=$datetime;
-
+  $self->{datetime} = $datetime;
 }
 
 sub text {
@@ -216,15 +228,13 @@ sub text {
   unless (defined $text) {
     if (exists($self->{text})) {
       return $self->{text};
-    } elsif (defined $self->headertext) {
-      return $self->headertext;
+    } elsif (defined $self->header_text) {
+      return $self->header_text;
     } else {
       return undef;
     }
   }
-  chomp($text);
-  $self->{text}=$text;
-
+  $self->{text} = $text;
 }
 
 sub pictures {
@@ -259,7 +269,7 @@ sub videos {
 
 }
 
-sub addpicture {
+sub add_picture {
 
   my $self = shift;
   my $picture = shift;
@@ -274,7 +284,7 @@ sub addpicture {
 
 }
 
-sub addvideo {
+sub add_video {
 
   my $self = shift;
   my $video = shift;
@@ -289,7 +299,7 @@ sub addvideo {
 
 }
 
-sub retrievemimeattachments {
+sub retrieve_attachments {
 
   my $self = shift;
   my $type = shift;
@@ -311,6 +321,19 @@ sub retrievemimeattachments {
     return [];
   } 
 
+}
+
+# Deprecated methods ##############
+#
+
+sub addpicture {
+  add_picture(@_);
+}
+sub addvideo {
+  add_video(@_);
+}
+sub retrievemimeattachments {
+  retrieve_attachments(@_);
 }
 
 

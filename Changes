@@ -1,5 +1,7 @@
 Revision history for MMS-MailMessage-ProviderParsed
 
+0.02    04-Sep-2005 / 15:00
+        Renamed methods (creating some depricated versions), tidied up and corrected pod.
 0.01    12-Aug-2004 / 15:00 
         First version, released on an unsuspecting world.
 
